@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Import Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <style>
+    /* Center Items */
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 90%;
+    }
+
+    #myForm {
+      width: 100%;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-control {
+      width: 100%;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .alert {
+      margin-top: 10px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    input {
+      margin-bottom: 10px;
+    }
+  </style>
+
+  <body>
+    <div class="container center">
+      <form id="myForm" onsubmit="handleFormSubmit(this)">
+        <p class="h3 mb-4 text-center">Form</p>
+        <div class="form-group">
+          <label for="name">Access Code</label>
+          <!--DropDown-->
+          <select
+            class="form-control"
+            id="access_code"
+            name="access_code"
+            onchange="addTimestamp()"
+          >
+            <option value="">SELECT ACCESS CODE</option>
+          </select>
+          <label id="output">otp_instructions: N/A</label>
+        </div>
+        <div class="form-group">
+          <label for="first_name">Caller Name</label>
+          <input
+            type="text"
+            id="first_name"
+            name="first_name"
+            class="form-control"
+            placeholder="Caller Name"
+            required
+          />
+        </div>
+        <!--last_name -->
+        <div class="form-group">
+          <label for="last_name">Last Name</label>
+          <input
+            type="text"
+            id="last_name"
+            name="last_name"
+            class="form-control"
+            placeholder="Last Name"
+            required
+          />
+        </div>
+        <!--employee_id -->
+        <div class="form-group">
+          <label for="employee_id">Employee ID</label>
+          <input
+            type="text"
+            id="employee_id"
+            name="employee_id"
+            class="form-control"
+            placeholder="Employee ID"
+            required
+          />
+        </div>
+        <!-- language -->
+        <div class="form-group">
+          <label for="language">Language</label>
+          <select
+            class="form-control"
+            id="language"
+            name="language"
+            onchange="onSelectInterpretor()"
+          ></select>
+        </div>
+        <!-- int_id -->
+        <div class="form-group">
+          <label for="int_id">Int ID</label>
+          <select class="form-control" id="int_id" name="int_id">
+            <option value="">Select Interpreter</option>
+          </select>
+        </div>
+        <div class="form-group" style="display: none">
+          <input type="text" id="init_timestamp" name="init_timestamp" />
+          <input type="text" id="start" name="start" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <div id="output"></div>
+    </div>
+    <script>
+      function preventFormSubmit() {
+        var forms = document.querySelectorAll("form");
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener("submit", function (event) {
+            event.preventDefault();
+          });
+        }
+      }
+      window.addEventListener("load", preventFormSubmit);
+
+      function handleFormSubmit(formObject) {
+        if (document.getElementById("access_code").value == 0) {
+          alert("Please select an access code");
+          return;
+        }
+
+        if (document.getElementById("int_id").value == 0) {
+          alert("Please select an interpreter");
+          return;
+        }
+
+        // get the text of the selected option int_id
+        var int_id = document.getElementById("int_id");
+        var int_id_text = int_id.options[int_id.selectedIndex].text;
+
+        if (
+          confirm(
+            "Are you sure you want to submit this information?\n\nAccess Code: " +
+              formObject.access_code.value +
+              "\nCaller Name: " +
+              formObject.first_name.value +
+              "\nLast Name: " +
+              formObject.last_name.value +
+              "\nEmployee ID: " +
+              formObject.employee_id.value +
+              "\nLanguage: " +
+              formObject.language.value +
+              "\nInterpreter: " +
+              int_id_text
+          )
+        ) {
+          try {
+            google.script.run.processForm(formObject);
+            alert("Form Submitted");
+            document.getElementById("myForm").reset();
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      }
+
+      var accessCodesAndIntIdsArray = [];
+      google.script.run
+        .withSuccessHandler(function (accessCodesAndIntIds) {
+          // show access codes in dropdown
+          accessCodesAndIntIdsArray = accessCodesAndIntIds;
+          var select = document.getElementById("access_code");
+          for (var i = 0; i < accessCodesAndIntIds.length; i++) {
+            var opt = accessCodesAndIntIds[i].access_code;
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+        })
+        .getAccessCodesAndIntIds();
+
+      // set language dropdown from getLanguages()
+      google.script.run
+        .withSuccessHandler(function (languages) {
+          // show access codes in dropdown
+          var select = document.getElementById("language");
+          for (var i = 0; i < languages.length; i++) {
+            var opt = languages[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            select.appendChild(el);
+          }
+        })
+        .getLanguages();
+
+      function addTimestamp() {
+        var timestamp = new Date().toLocaleString("en-US", {
+          timeZone: "America/Los_Angeles",
+        });
+        document.getElementById("init_timestamp").value = timestamp;
+        document.getElementById("start").value = timestamp;
+
+        // For the selected access code, get the corresponding intId
+        accessCodesAndIntIdsArray.forEach(function (obj) {
+          if (obj.access_code == document.getElementById("access_code").value) {
+            var intId = obj.int_id;
+            document.getElementById("output").innerHTML =
+              "otp_instructions: " + intId;
+          }
+        });
+      }
+
+      function onSelectInterpretor() {
+        // remove all options from int_id dropdown
+        var select = document.getElementById("int_id");
+        var length = select.options.length;
+        for (i = length - 1; i >= 0; i--) {
+          select.options[i] = null;
+        }
+        // get the language value from the dropdown
+        var language = document.getElementById("language").value;
+        console.log(language);
+
+        // getInterpreters(language)
+        google.script.run
+          .withSuccessHandler(function (interpreters) {
+            // show interpreters in dropdown
+            var select = document.getElementById("int_id");
+            for (var i = 0; i < interpreters.length; i++) {
+              var opt = interpreters[i];
+              var el = document.createElement("option");
+              el.textContent = opt.iid + " - " + opt.name;
+              el.value = opt.id;
+              select.appendChild(el);
+            }
+          })
+          .getInterpreters(language);
+      }
+    </script>
+  </body>
+</html>
