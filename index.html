@@ -1,140 +1,496 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <!-- Import Bootstrap -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <!-- Import Ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Import Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Import Bootstrap CSS -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
-      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
-      crossorigin="anonymous"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
     />
+
+    <!-- Import Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <style>
+      /* Center Items */
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        width: 90%;
+      }
+
+      #myForm {
+        width: 70%;
+      }
+
+      #myForm_router {
+        width: 70%;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      .form-group {
+        margin-bottom: 10px;
+      }
+
+      .form-control {
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .alert {
+        margin-top: 10px;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-color: #c3e6cb;
+      }
+
+      input {
+        margin-bottom: 10px;
+      }
+    </style>
   </head>
 
-  <style>
-    /* Center Items */
-    .center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .container {
-      width: 90%;
-    }
-
-    #myForm {
-      width: 100%;
-    }
-
-    label {
-      font-weight: bold;
-    }
-
-    .form-group {
-      margin-bottom: 10px;
-    }
-
-    .form-control {
-      width: 100%;
-    }
-
-    .btn {
-      width: 100%;
-    }
-
-    .alert {
-      margin-top: 10px;
-    }
-
-    .alert-success {
-      background-color: #d4edda;
-      color: #155724;
-      border-color: #c3e6cb;
-    }
-
-    input {
-      margin-bottom: 10px;
-    }
-  </style>
-
   <body>
-    <div class="container center">
-      <form id="myForm" onsubmit="handleFormSubmit(this)">
-        <p class="h3 mb-4 text-center">Form</p>
-        <div class="form-group">
-          <label for="name">Access Code</label>
-          <!--DropDown-->
-          <select
-            class="form-control"
-            id="access_code"
-            name="access_code"
-            onchange="addTimestamp()"
-          >
-            <option value="">SELECT ACCESS CODE</option>
-          </select>
-          <label id="output">otp_instructions: N/A</label>
+    <!-- Form Login using JavaScript -->
+    <div class="container login" style="margin-top: 50px">
+      <div class="row" style="margin-top: 45px">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Please sign in</h3>
+            </div>
+            <div class="panel-body">
+              <form accept-charset="UTF-8" role="form">
+                <fieldset>
+                  <div class="form-group input-group">
+                    <span class="input-group-addon"
+                      ><i class="glyphicon glyphicon-user"></i
+                    ></span>
+                    <input
+                      class="form-control"
+                      placeholder="Username"
+                      name="username"
+                      type="text"
+                    />
+                  </div>
+                  <div class="form-group input-group">
+                    <span class="input-group-addon"
+                      ><i class="glyphicon glyphicon-lock"></i
+                    ></span>
+                    <input
+                      class="form-control"
+                      placeholder="Password"
+                      name="password"
+                      type="password"
+                    />
+                  </div>
+                </fieldset>
+                <div
+                  class="form-group"
+                  style="
+                    align-items: center;
+                    display: flex;
+                    justify-content: center;
+                  "
+                >
+                  <input
+                    class="btn btn-lg btn-success btn-block"
+                    type="button"
+                    id="btnLogin"
+                    value="Login"
+                    onclick="loginSubmit(this)"
+                  />
+                  <!--Spinner effect -->
+                  <i
+                    class="fa fa-spinner fa-spin spinner"
+                    style="font-size: 32px; display: none"
+                  ></i>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="first_name">Caller Name</label>
-          <input
-            type="text"
-            id="first_name"
-            name="first_name"
-            class="form-control"
-            placeholder="Caller Name"
-            required
-          />
-        </div>
-        <!--last_name -->
-        <div class="form-group">
-          <label for="last_name">Last Name</label>
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            class="form-control"
-            placeholder="Last Name"
-            required
-          />
-        </div>
-        <!--employee_id -->
-        <div class="form-group">
-          <label for="employee_id">Employee ID</label>
-          <input
-            type="text"
-            id="employee_id"
-            name="employee_id"
-            class="form-control"
-            placeholder="Employee ID"
-            required
-          />
-        </div>
-        <!-- language -->
-        <div class="form-group">
-          <label for="language">Language</label>
-          <select
-            class="form-control"
-            id="language"
-            name="language"
-            onchange="onSelectInterpretor()"
-          ></select>
-        </div>
-        <!-- int_id -->
-        <div class="form-group">
-          <label for="int_id">Int ID</label>
-          <select class="form-control" id="int_id" name="int_id">
-            <option value="">Select Interpreter</option>
-          </select>
-        </div>
-        <div class="form-group" style="display: none">
-          <input type="text" id="init_timestamp" name="init_timestamp" />
-          <input type="text" id="start" name="start" />
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-      <div id="output"></div>
+      </div>
     </div>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="myModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
+      <!-- 2 Options -> 2 Routes/ Buttons -->
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Choose Page</h4>
+          </div>
+          <div class="modal-body">
+            <!-- 2 Buttons -->
+            <button
+              type="button"
+              class="btn btn-default"
+              data-dismiss="modal"
+              id="btnClose"
+              onClick="onModalClose()"
+            >
+              Close
+            </button>
+            <br />
+            <br />
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnGoToPage"
+              onClick="onGoToInterpretersPage()"
+            >
+              Interpreters Page
+            </button>
+            <br />
+            <br />
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnGoToPage2"
+              onClick="onGoToRoutersPage()"
+            >
+              Routers Page
+            </button>
+            <br />
+            <br />
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #ff0000; color: white"
+              id="btnLogout"
+              onClick="onLogout()"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Interpreters Page Hidden -->
+    <div class="container interpreter" style="margin-top: 50px; display: none">
+      <!-- Open Modal -->
+      <button
+        type="button"
+        class="btn btn-lg btn-primary btn-block"
+        data-toggle="modal"
+        data-target="#myModal"
+        style="width: 20%"
+      >
+        Change Page
+      </button>
+      <div class="center">
+        <form id="myForm" onsubmit="handleFormSubmit(this)">
+          <p class="h2 mb-4 text-center">Interpreters</p>
+          <div class="form-group">
+            <label for="name">Access Code</label>
+            <!--DropDown-->
+            <select
+              class="form-control"
+              id="access_code"
+              name="access_code"
+              onchange="addTimestamp()"
+            >
+              <option value="">SELECT ACCESS CODE</option>
+            </select>
+            <label id="output">otp_instructions: N/A</label>
+          </div>
+          <div class="form-group">
+            <label for="first_name">Caller Name</label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              class="form-control"
+              placeholder="Caller Name"
+              required
+            />
+          </div>
+          <!--last_name -->
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              class="form-control"
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          <!--employee_id -->
+          <div class="form-group">
+            <label for="employee_id">Employee ID</label>
+            <input
+              type="text"
+              id="employee_id"
+              name="employee_id"
+              class="form-control"
+              placeholder="Employee ID"
+              required
+            />
+          </div>
+          <!-- language -->
+          <div class="form-group">
+            <label for="language">Language</label>
+            <select
+              class="form-control"
+              id="language"
+              name="language"
+              onchange="onSelectInterpretor()"
+            ></select>
+          </div>
+          <!-- int_id -->
+          <div class="form-group">
+            <label for="int_id">Int ID</label>
+            <select class="form-control" id="int_id" name="int_id">
+              <option value="">Select Interpreter</option>
+            </select>
+          </div>
+          <div class="form-group" style="display: none">
+            <input type="text" id="init_timestamp" name="init_timestamp" />
+            <input type="text" id="start" name="start" />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="output"></div>
+      </div>
+    </div>
+    <!-- Routers Page -->
+    <div class="container router" style="margin-top: 50px; display: none">
+      <button
+        type="button"
+        class="btn btn-lg btn-primary btn-block"
+        data-toggle="modal"
+        data-target="#myModal"
+        style="width: 20%"
+      >
+        Change Page
+      </button>
+      <div class="center">
+        <form id="myForm_router" onsubmit="handleFormRouterSubmit(this)">
+          <p class="h2 mb-4 text-center">Routers</p>
+          <div class="form-group">
+            <label for="name">Access Code</label>
+            <!--DropDown-->
+            <select
+              class="form-control"
+              id="access_code_router"
+              name="access_code_router"
+              onchange="addTimestampRouter()"
+            >
+              <option value="">SELECT ACCESS CODE</option>
+            </select>
+            <label id="output_router">otp_instructions: N/A</label>
+          </div>
+          <div class="form-group">
+            <label for="first_name_router">Caller Name</label>
+            <input
+              type="text"
+              id="first_name_router"
+              name="first_name_router"
+              class="form-control"
+              placeholder="Caller Name"
+              required
+            />
+          </div>
+          <!--last_name -->
+          <div class="form-group">
+            <label for="last_name_router">Last Name</label>
+            <input
+              type="text"
+              id="last_name_router"
+              name="last_name_router"
+              class="form-control"
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          <!--employee_id -->
+          <div class="form-group">
+            <label for="employee_id_router">Employee ID</label>
+            <input
+              type="text"
+              id="employee_id_router"
+              name="employee_id_router"
+              class="form-control"
+              placeholder="Employee ID"
+              required
+            />
+          </div>
+          <!-- language -->
+          <div class="form-group">
+            <label for="language_router">Language</label>
+            <select
+              class="form-control"
+              id="language_router"
+              name="language_router"
+              onchange="onSelectInterpretorRouter()"
+            ></select>
+          </div>
+          <!-- int_id -->
+          <div class="form-group">
+            <label for="int_id_router">Int ID</label>
+            <select
+              class="form-control"
+              id="int_id_router"
+              name="int_id_router"
+            >
+              <option value="">Select Interpreter</option>
+            </select>
+          </div>
+          <div class="form-group" style="display: none">
+            <input
+              type="text"
+              id="init_timestamp_router"
+              name="init_timestamp_router"
+            />
+            <input type="text" id="start_router" name="start_router" />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="output_router"></div>
+      </div>
+    </div>
+    <!-- JavaScript -->
     <script>
+      let int_id = null;
+      let extension = null;
+      // check if user is logged in
+      $(document).ready(function () {
+        // check local storage
+        if (localStorage.getItem("user") != null) {
+          // show interpreter page
+          $(".interpreter").show();
+          // hide login page
+          $(".login").hide();
+        }
+      });
+
+      function loginSubmit(form) {
+        // show loading spinner
+        $(".spinner").show();
+        // hide login button
+        $("#btnLogin").hide();
+        // check if username and password are filled
+        if (form.form.username.value == "" || form.form.password.value == "") {
+          alert("Please fill in username and password");
+          // hide loading spinner
+          $(".spinner").hide();
+          // show login button
+          $("#btnLogin").show();
+        }
+
+        var username = form.form.username.value;
+        var password = form.form.password.value;
+
+        // check if username and password are correct
+        google.script.run
+          .withSuccessHandler(onSucessLogin)
+          .checkLogin(username, password);
+      }
+
+      function onLogout() {
+        // clear local storage
+        localStorage.clear();
+        // show login page
+        $(".login").show();
+        // hide interpreter page
+        $(".interpreter").hide();
+        // hide routers page
+        $(".router").hide();
+        // hide loading spinner
+        $(".spinner").hide();
+        // hide modal button
+        $("#myModal").hide();
+        // show login button
+        $("#btnLogin").show();
+      }
+
+      function onSucessLogin(user) {
+        if (user.length == 0) {
+          alert("Username or password is incorrect");
+          $(".spinner").hide();
+          $("#btnLogin").show();
+        } else {
+          // hide login page
+          $(".login").hide();
+          // hide spinner
+          $(".spinner").hide();
+          // show interpreters page
+          $(".interpreter").show();
+          // show modal
+          $("#myModal").modal("show");
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+      }
+
+      function onGoToInterpretersPage() {
+        // hide modal
+        $("#myModal").modal("hide");
+        // hide login page
+        $(".container").eq(0).hide();
+        // hide router page
+        $(".container").eq(2).hide();
+        // show interpreters page
+        $(".container").eq(1).show();
+      }
+
+      function onGoToRoutersPage() {
+        // hide modal
+        $("#myModal").modal("hide");
+        // hide interpreters page
+        $(".container").eq(1).hide();
+        // hide login page
+        $(".container").eq(0).hide();
+        // show routers page
+        $(".container").eq(2).show();
+      }
+
+      function onModalClose() {
+        // close modal
+        $("#myModal").modal("hide");
+      }
+
       function preventFormSubmit() {
         var forms = document.querySelectorAll("form");
         for (var i = 0; i < forms.length; i++) {
@@ -186,6 +542,47 @@
         }
       }
 
+      function handleFormRouterSubmit(formObject) {
+        if (document.getElementById("access_code_router").value == 0) {
+          alert("Please select an access code");
+          return;
+        }
+
+        if (document.getElementById("int_id_router").value == 0) {
+          alert("Please select an interpreter");
+          return;
+        }
+
+        // get the text of the selected option int_id
+        var int_id = document.getElementById("int_id_router");
+        var int_id_text = int_id.options[int_id.selectedIndex].text;
+
+        if (
+          confirm(
+            "Are you sure you want to submit this information?\n\nAccess Code: " +
+              formObject.access_code_router.value +
+              "\nCaller Name: " +
+              formObject.first_name_router.value +
+              "\nLast Name: " +
+              formObject.last_name_router.value +
+              "\nEmployee ID: " +
+              formObject.employee_id_router.value +
+              "\nLanguage: " +
+              formObject.language_router.value +
+              "\nInterpreter: " +
+              int_id_text
+          )
+        ) {
+          try {
+            google.script.run.processFormRouter(formObject);
+            alert("Form Submitted");
+            document.getElementById("myForm_router").reset();
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      }
+
       var accessCodesAndIntIdsArray = [];
       google.script.run
         .withSuccessHandler(function (accessCodesAndIntIds) {
@@ -198,6 +595,15 @@
             el.textContent = opt;
             el.value = opt;
             select.appendChild(el);
+          }
+
+          var selectRouter = document.getElementById("access_code_router");
+          for (var i = 0; i < accessCodesAndIntIds.length; i++) {
+            var opt = accessCodesAndIntIds[i].access_code;
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            selectRouter.appendChild(el);
           }
         })
         .getAccessCodesAndIntIds();
@@ -214,8 +620,37 @@
             el.value = opt;
             select.appendChild(el);
           }
+
+          var selectRouter = document.getElementById("language_router");
+          for (var i = 0; i < languages.length; i++) {
+            var opt = languages[i];
+            var el = document.createElement("option");
+            el.textContent = opt;
+            el.value = opt;
+            selectRouter.appendChild(el);
+          }
         })
         .getLanguages();
+
+      function addTimestampRouter() {
+        var timestamp = new Date().toLocaleString("en-US", {
+          timeZone: "America/Los_Angeles",
+        });
+        document.getElementById("init_timestamp_router").value = timestamp;
+        document.getElementById("start_router").value = timestamp;
+
+        // For the selected access code, get the corresponding intId
+        accessCodesAndIntIdsArray.forEach(function (obj) {
+          if (
+            obj.access_code ==
+            document.getElementById("access_code_router").value
+          ) {
+            var intId = obj.int_id;
+            document.getElementById("output_router").innerHTML =
+              "otp_instructions: " + intId;
+          }
+        });
+      }
 
       function addTimestamp() {
         var timestamp = new Date().toLocaleString("en-US", {
@@ -234,6 +669,33 @@
         });
       }
 
+      function onSelectInterpretorRouter() {
+        // remove all options from int_id dropdown
+        var select = document.getElementById("int_id_router");
+        var length = select.options.length;
+        for (i = length - 1; i >= 0; i--) {
+          select.options[i] = null;
+        }
+        // get the language value from the dropdown
+        var language = document.getElementById("language_router").value;
+
+        // getInterpreters(language)
+        google.script.run
+          .withSuccessHandler(function (interpreters) {
+            // show interpreters in dropdown
+            var select = document.getElementById("int_id_router");
+
+            for (var i = 0; i < interpreters.length; i++) {
+              var opt = interpreters[i];
+              var el = document.createElement("option");
+              el.textContent = opt.iid + " - " + opt.name;
+              el.value = opt.id;
+              select.appendChild(el);
+            }
+          })
+          .getInterpreters(language);
+      }
+
       function onSelectInterpretor() {
         // remove all options from int_id dropdown
         var select = document.getElementById("int_id");
@@ -243,13 +705,13 @@
         }
         // get the language value from the dropdown
         var language = document.getElementById("language").value;
-        console.log(language);
 
         // getInterpreters(language)
         google.script.run
           .withSuccessHandler(function (interpreters) {
             // show interpreters in dropdown
             var select = document.getElementById("int_id");
+
             for (var i = 0; i < interpreters.length; i++) {
               var opt = interpreters[i];
               var el = document.createElement("option");
